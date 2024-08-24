@@ -19,6 +19,10 @@ export default function OAuth() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    // displayName: User's full name from their Google profile.
+                    // email: User's email address from their Google profile.
+                    // photoURL: URL of the user's profile picture from Google.
+                    // These values are available in the User object returned by Firebase after a successful Google sign-in.
                     name: resultsFromGoogle.user.displayName,
                     email: resultsFromGoogle.user.email,
                     googlePhotoUrl: resultsFromGoogle.user.photoURL,
