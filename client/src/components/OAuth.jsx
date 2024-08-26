@@ -1,4 +1,3 @@
-import { Button } from 'flowbite-react';
 import { AiFillGoogleCircle } from 'react-icons/ai';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../firebase';
@@ -7,40 +6,42 @@ import { signInSuccess } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 export default function OAuth() {
-    const auth = getAuth(app)
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const handleGoogleClick = async () =>{
-        const provider = new GoogleAuthProvider()
-        provider.setCustomParameters({ prompt: 'select_account' })
+    const auth = getAuth(app);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    
+    const handleGoogleClick = async () => {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
         try {
-            const resultsFromGoogle = await signInWithPopup(auth, provider)
+            const resultsFromGoogle = await signInWithPopup(auth, provider);
             const res = await fetch('/api/auth/google', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    // displayName: User's full name from their Google profile.
-                    // email: User's email address from their Google profile.
-                    // photoURL: URL of the user's profile picture from Google.
-                    // These values are available in the User object returned by Firebase after a successful Google sign-in.
                     name: resultsFromGoogle.user.displayName,
                     email: resultsFromGoogle.user.email,
                     googlePhotoUrl: resultsFromGoogle.user.photoURL,
                 }),
-                })
-            const data = await res.json()
-            if (res.ok){
-                dispatch(signInSuccess(data))
-                navigate('/')
+            });
+            const data = await res.json();
+            if (res.ok) {
+                dispatch(signInSuccess(data));
+                navigate('/');
             }
         } catch (error) {
             console.log(error);
         }
-    } 
-  return (
-    <Button type='button' gradientDuoTone='pinkToOrange' outline onClick={handleGoogleClick}>
-        <AiFillGoogleCircle className='w-6 h-6 mr-2'/>
-        Continue with Google
-    </Button>
-  )
+    };
+
+    return (
+        <button
+            type='button'
+            onClick={handleGoogleClick}
+            className='flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50'
+        >
+            <AiFillGoogleCircle className='w-6 h-6' />
+            <span>Continue with Google</span>
+        </button>
+    );
 }
